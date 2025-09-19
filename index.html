@@ -59,45 +59,37 @@
       </a-cylinder>
 
       <!-- Rig avec caméra et contrôleurs -->
-      <a-entity id="rig" oculus-thumbstick-controls>
+      <a-entity id="rig" oculus-thumbstick-controls thumbstick-turn>
         <a-entity camera look-controls wasm-controls></a-entity>
         <a-entity oculus-touch-controls="hand: left"></a-entity>
         <a-entity oculus-touch-controls="hand: right"></a-entity>
       </a-entity>
       
       <script>
-      AFRAME.registerComponent('vr-joystick-move', {
-        schema: {speed: {type: 'number', default: 0.07}}, // Vitesse modérée
-        tick: function () {
-          // Repère le contrôleur gauche
-          const leftHand = document.querySelector('[hand-controls="hand: left"]');
-          if (!leftHand || !leftHand.components['tracked-controls']) return;
-      
-          // Récupère l’objet Gamepad du contrôleur
-          const gamepad = leftHand.components['tracked-controls'].controller;
-          if (!gamepad || !gamepad.axes) return; // Pas de manette ou axes indisponibles
-      
-          const x = gamepad.axes[2] !== undefined ? gamepad.axes[2] : gamepad.axes[0]; // x du joystick gauche
-          const y = gamepad.axes[3] !== undefined ? gamepad.axes[3] : gamepad.axes[1]; // y du joystick gauche
-      
-          // Seuil minimum, évite du bruit
-          if (Math.abs(x) < 0.1 && Math.abs(y) < 0.1) return;
-      
-          // Déplace le rig selon rotation de la caméra (regard)
-          const rig = this.el;
-          const camera = rig.querySelector('[camera]');
-          if (!camera) return;
-          const rotation = camera.object3D.rotation.y; // Yaw (orientation horizontale)
-          // Convertit l’axe du joystick (y = avant/arrière, x = gauche/droite) en déplacement
-          const dx = -y * Math.sin(rotation) * this.data.speed + x * Math.cos(rotation) * this.data.speed;
-          const dz = -y * Math.cos(rotation) * this.data.speed - x * Math.sin(rotation) * this.data.speed;
-          rig.object3D.position.x += dx;
-          rig.object3D.position.z += dz;
-        }
-      });
+        AFRAME.registerComponent('thumbstick-turn', {
+          schema: {speed: {type: "number", default: 1.2}},
+          tick: function () {
+            // Repère la main droite
+            var rightHand = document.querySelector('[hand-controls="hand: right"]');
+            if (!rightHand || !rightHand.components['tracked-controls']) return;
+            var gamepad = rightHand.components['tracked-controls'].controller;
+            if (!gamepad || !gamepad.axes) return;
+        
+            // Axes du stick droit sur Oculus : typiquement [2] pour gauche/droite, [3] pour haut/bas
+            var x =
+              gamepad.axes[2] !== undefined
+                ? gamepad.axes[2]
+                : (gamepad.axes.length > 2 ? gamepad.axes[0] : 0);
+        
+            // Seuil anti-bruit
+            if (Math.abs(x) < 0.15) return;
+        
+            // Tourne le rig (caméra et mains) sur y
+            this.el.object3D.rotation.y -= x * this.data.speed * 0.01; // Ajuste le facteur de vitesse selon confort
+          }
+        });
       </script>
 
-      
     </a-scene>
   </body>
 </html>
