@@ -31,21 +31,21 @@
                position="5 10 5">
       </a-entity>
             
-      <a-plane position="0 0 0" rotation="-90 0 0" width="40" height="40" color="green" static-body shadow="type: pcfsoft; cast: true; receive: true"></a-plane>
+      <a-plane position="0 0 0" rotation="-90 0 0" width="40" height="40" color="green" static-body shadow="receive: true"></a-plane>
       
       <a-box id="cube" 
              color="red" 
              depth="3" height="3" width="3" 
              position="4 1.5 -3"
              rotation="0 40 0"
-             shadow="type: pcfsoft; cast: true; receive: true">
+             shadow="cast: true; receive: true">
       </a-box>
 
       <a-sphere id="bouboule"
                 color="blue"
                 radius="1.2"
                 position="-1 1.2 6"
-                shadow="type: pcfsoft; cast: true; receive: true">
+                shadow="cast: true; receive: true">
       </a-sphere>
 
       <a-cylinder id="mnms"
@@ -53,15 +53,20 @@
                   radius="0.5"
                   height="1.5"
                   color="#FFC65D"
-                  shadow="type: pcfsoft; cast: true; receive: true">
+                  shadow="cast: true; receive: true">
       </a-cylinder>
 
       <!-- Rig avec caméra et contrôleurs -->
-      <a-entity id="rig" movement-controls position="0 1.6 0">
+      <a-entity id="rig" position="0 1.6 0">
+        <a-entity camera look-controls wasd-controls></a-entity>
+        <a-entity laser-controls="hand: left"></a-entity>
+        <a-entity laser-controls="hand: right"></a-entity>
+      </a-entity>
+      <!--a-entity id="rig" movement-controls position="0 1.6 0">
         <a-entity camera look-controls="pointerLockEnabled: true"></a-entity>
         <a-entity oculus-touch-controls="hand: left"></a-entity>
         <a-entity oculus-touch-controls="hand: right"></a-entity>
-      </a-entity>
+      </a-entity-->
       
     </a-scene>
   </body>
