@@ -59,36 +59,36 @@
       </a-cylinder>
 
       <!-- Rig avec caméra et contrôleurs -->
-      <a-entity id="rig" oculus-thumbstick-controls thumbstick-turn>
-        <a-entity camera look-controls wasm-controls></a-entity>
-        <a-entity oculus-touch-controls="hand: left"></a-entity>
-        <a-entity oculus-touch-controls="hand: right"></a-entity>
+      <a-entity id="rig"
+          oculus-thumbstick-controls
+          thumbstick-turn>
+        <a-entity camera look-controls></a-entity>
+        <a-entity hand-controls="hand: left"></a-entity>
+        <a-entity hand-controls="hand: right"></a-entity>
       </a-entity>
+
       
       <script>
         AFRAME.registerComponent('thumbstick-turn', {
-          schema: {speed: {type: "number", default: 1.2}},
+          schema: {speed: {type: "number", default: 1.8}},
           tick: function () {
-            // Repère la main droite
             var rightHand = document.querySelector('[hand-controls="hand: right"]');
             if (!rightHand || !rightHand.components['tracked-controls']) return;
             var gamepad = rightHand.components['tracked-controls'].controller;
-            if (!gamepad || !gamepad.axes) return;
+            if (!gamepad || !gamepad.axes || gamepad.axes.length < 4) return;
         
-            // Axes du stick droit sur Oculus : typiquement [2] pour gauche/droite, [3] pour haut/bas
-            var x =
-              gamepad.axes[2] !== undefined
-                ? gamepad.axes[2]
-                : (gamepad.axes.length > 2 ? gamepad.axes[0] : 0);
+            // axes[2] == horizontal du joystick droit (sur Meta/Quest/Oculus)
+            var x = gamepad.axes[2];
         
             // Seuil anti-bruit
-            if (Math.abs(x) < 0.15) return;
+            if (Math.abs(x) < 0.2) return;
         
-            // Tourne le rig (caméra et mains) sur y
-            this.el.object3D.rotation.y -= x * this.data.speed * 0.01; // Ajuste le facteur de vitesse selon confort
+            // Rotation Yaw (gauche/droite)
+            this.el.object3D.rotation.y -= x * this.data.speed * 0.03; // Ajuste le facteur si trop rapide ou trop lent
           }
         });
       </script>
+
 
     </a-scene>
   </body>
