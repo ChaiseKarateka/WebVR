@@ -8,8 +8,6 @@
     
     <script src="https://cdn.jsdelivr.net/gh/n5ro/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/gh/protyze/aframe-thumbstick-controls@master/dist/aframe-thumbstick-controls.min.js"></script>
-
   </head>
   
   <body style="margin:0; overflow:hidden;">
@@ -59,13 +57,35 @@
       </a-cylinder>
 
       <!-- Rig avec caméra et contrôleurs -->
-      <a-entity id="rig" position="0 1.6 0" thumbstick-controls="minThreshold: 0.05">
+      <a-entity id="rig" position="0 1.6 0" vr-joystick-move>
         <a-entity camera look-controls></a-entity>
-
-        <!-- Contrôleurs VR nécessaires -->
-        <a-entity oculus-touch-controls="hand: left"></a-entity>
-        <a-entity oculus-touch-controls="hand: right"></a-entity>
+        <a-entity hand-controls="hand: left"></a-entity>
+        <a-entity hand-controls="hand: right"></a-entity>
       </a-entity>
+
+      <script>
+        AFRAME.registerComponent('vr-joystick-move', {
+          schema: {speed: {type: 'number', default: 0.1}},
+          init: function () {
+            this.leftHand = null;
+          },
+          tick: function () {
+            const rig = this.el;
+            if (!this.leftHand) {
+              this.leftHand = document.querySelector('[hand-controls="hand: left"]');
+              if (!this.leftHand) return;
+            }
+            const gamepad = this.leftHand.components['tracked-controls']?.controller;
+            if (!gamepad || !gamepad.axes) return;
+        
+            const [x, y] = gamepad.axes;
+            if (Math.abs(x) < 0.1 && Math.abs(y) < 0.1) return;
+        
+            rig.object3D.position.x += x * this.data.speed;
+            rig.object3D.position.z += -y * this.data.speed;
+          }
+        });
+      </script>
       
     </a-scene>
   </body>
