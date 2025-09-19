@@ -60,34 +60,30 @@
 
       <!-- Rig avec caméra et contrôleurs -->
       <a-entity id="rig"
-          oculus-thumbstick-controls
+          thumbstick-move
           thumbstick-turn>
         <a-entity camera look-controls></a-entity>
         <a-entity hand-controls="hand: left"></a-entity>
         <a-entity hand-controls="hand: right"></a-entity>
       </a-entity>
-
       
       <script>
         AFRAME.registerComponent('thumbstick-turn', {
-          schema: {speed: {type: "number", default: 1.8}},
+          schema: {speed: {type: "number", default: 2.0}},
           tick: function () {
             var rightHand = document.querySelector('[hand-controls="hand: right"]');
             if (!rightHand || !rightHand.components['tracked-controls']) return;
             var gamepad = rightHand.components['tracked-controls'].controller;
+            // Sur Quest/Meta/Oculus : axes[2] = horizontal du stick droit
             if (!gamepad || !gamepad.axes || gamepad.axes.length < 4) return;
-        
-            // axes[2] == horizontal du joystick droit (sur Meta/Quest/Oculus)
             var x = gamepad.axes[2];
-        
-            // Seuil anti-bruit
-            if (Math.abs(x) < 0.2) return;
-        
-            // Rotation Yaw (gauche/droite)
-            this.el.object3D.rotation.y -= x * this.data.speed * 0.03; // Ajuste le facteur si trop rapide ou trop lent
+            if (Math.abs(x) > 0.20) {
+              this.el.object3D.rotation.y -= x * this.data.speed * 0.03;
+            }
           }
         });
       </script>
+
 
 
     </a-scene>
