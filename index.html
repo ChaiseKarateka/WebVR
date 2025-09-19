@@ -59,15 +59,13 @@
       </a-cylinder>
 
       <!-- Rig avec caméra et contrôleurs -->
-      <a-entity id="rig"
-          thumbstick-move
-          thumbstick-turn>
-        <a-entity camera look-controls></a-entity>
-        <a-entity hand-controls="hand: left"></a-entity>
-        <a-entity hand-controls="hand: right"></a-entity>
+      <a-entity id="rig" oculus-thumbstick-controls>
+        <a-entity camera look-controls wasm-controls></a-entity>
+        <a-entity oculus-touch-controls="hand: left"></a-entity>
+        <a-entity oculus-touch-controls="hand: right"></a-entity>
       </a-entity>
       
-      <script>
+      <!--<script>
         AFRAME.registerComponent('thumbstick-turn', {
           schema: {speed: {type: "number", default: 2.0}},
           tick: function () {
@@ -82,9 +80,7 @@
             }
           }
         });
-      </script>
-
-
+      </script>-->
 
     </a-scene>
   </body>
