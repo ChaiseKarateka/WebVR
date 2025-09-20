@@ -60,9 +60,24 @@
 
       <a-entity id="rig">
         <a-camera position="0 1.6 0"></a-camera>
-        <a-entity oculus-touch-controls="hand: left" oculus-thumbstick-controls shadow="cast: true; receive: true"></a-entity>
-        <a-entity oculus-touch-controls="hand: right" look-controls shadow="cast: true; receive: true"></a-entity>
+        <a-entity id="leftHand" oculus-touch-controls="hand: left" oculus-thumbstick-controls shadow="cast: true; receive: true"></a-entity>
+        <a-entity id="rightHand" oculus-touch-controls="hand: right" look-controls shadow="cast: true; receive: true"></a-entity>
       </a-entity>
+
+      <script>
+      // Rotation avec joystick droit
+      const rig = document.querySelector('#rig');
+      const rightHand = document.querySelector('#rightHand');
+
+      rightHand.addEventListener('thumbstickmoved', (e) => {
+        // e.detail = {x, y}
+        if (Math.abs(e.detail.x) > 0.2) {
+          const rot = rig.getAttribute('rotation');
+          rot.y -= e.detail.x * 2; // vitesse de rotation
+          rig.setAttribute('rotation', rot);
+        }
+      });
+    </script>
 
     </a-scene>
   </body>
